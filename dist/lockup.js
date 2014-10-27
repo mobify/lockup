@@ -28,7 +28,7 @@
         Lockup.__super__.call(this, element, options, Lockup.DEFAULTS);
     }
 
-    Lockup.VERSION = '0.0.1';
+    Lockup.VERSION = '0.0.2';
 
     Lockup.DEFAULTS = {
         container: null
@@ -117,7 +117,7 @@
              * as do some scrolling magic to make sure forms don't jump the page
              * around when they're focused.
              */
-            else if (this.iOSVersion >= 8) {
+            else if (this.iOSVersion && this.iOSVersion >= 8) {
                 this.$body
                     .css('margin-top', 0)
                     .css('margin-bottom', 0);
@@ -133,7 +133,7 @@
              * focus to trigger and then jump scroll back to the initial
              * position. Looks like crap but it works.
              */
-            else if (this.iOSVersion <= 7) {
+            else if (this.iOSVersion && this.iOSVersion <= 7) {
                 this.$element.find('input, select, textarea')
                     .on('focus', function() {
                         setTimeout(function() {
@@ -153,7 +153,7 @@
                 this.$html.css('position', '');
                 this.$html.css('top', '');
                 window.scrollTo(0, this.scrollPosition);
-            } else if (this.iOSVersion >= 8) {
+            } else if (this.iOSVersion && this.iOSVersion >= 8) {
                 this.$body
                     .css('margin', '');
 
@@ -162,7 +162,7 @@
                     .css('height', '');
 
                 window.scrollTo(0, this.scrollPosition);
-            } else if (this.iOSVersion <= 7) {
+            } else if (this.iOSVersion && this.iOSVersion <= 7) {
                 this.$element.find('input, select, textarea').off('focus');
             }
 
@@ -181,7 +181,7 @@
                 return v && v[0] || 0;
             }
 
-            return 0;
+            return false;
         },
 
         _preventDefault: function(e) {
