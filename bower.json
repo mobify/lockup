@@ -21,6 +21,7 @@
   "dependencies": {
     "plugin": "~2.1.0",
     "requirejs-text": "~2.0.12",
-    "requirejs": "~2.1.14"
+    "requirejs": "~2.1.14",
+    "detect": "https://github.com/mobify/detect.git#~0.0.1"
   }
 }
