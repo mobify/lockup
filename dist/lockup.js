@@ -3,7 +3,7 @@
         define([
             '$',
             'plugin',
-            'detect'
+            'deckard'
         ], factory);
     } else {
         var framework = window.Zepto || window.jQuery;
