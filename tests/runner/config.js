@@ -7,6 +7,7 @@ require.config({
         'chai': 'node_modules/chai/chai',
         'mocha': 'node_modules/mocha/mocha',
         'plugin': 'bower_components/plugin/dist/plugin.min',
+        'deckard': 'bower_components/deckard/dist/deckard.min',
         'lockup': 'dist/lockup'
     },
     'shim': {

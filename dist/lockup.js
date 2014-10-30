@@ -2,7 +2,8 @@
     if (typeof define === 'function' && define.amd) {
         define([
             '$',
-            'plugin'
+            'plugin',
+            'deckard'
         ], factory);
     } else {
         var framework = window.Zepto || window.jQuery;
@@ -28,7 +29,7 @@
         Lockup.__super__.call(this, element, options, Lockup.DEFAULTS);
     }
 
-    Lockup.VERSION = '0.0.2';
+    Lockup.VERSION = '0.0.3';
 
     Lockup.DEFAULTS = {
         container: null
@@ -41,8 +42,6 @@
             this.$body = $('body');
             this.$doc = $(document);
 
-            this.isChrome = /chrome/i.test(navigator.userAgent);
-            this.iOSVersion = this._getiOSVersion();
             this.$element.appendTo(this.$container = this._buildContainer());
         },
 
@@ -108,7 +107,7 @@
              * and moving it up to the equivalent of the scroll position
              * to lock scrolling.
              */
-            if (this.isChrome) {
+            if ($.browser.chrome) {
                 this.$html.css('position', 'fixed');
                 this.$html.css('top', this.scrollPosition * -1);
             }
@@ -117,7 +116,7 @@
              * as do some scrolling magic to make sure forms don't jump the page
              * around when they're focused.
              */
-            else if (this.iOSVersion && this.iOSVersion >= 8) {
+            else if ($.os.ios && $.os.major >= 8) {
                 this.$body
                     .css('margin-top', 0)
                     .css('margin-bottom', 0);
@@ -133,7 +132,7 @@
              * focus to trigger and then jump scroll back to the initial
              * position. Looks like crap but it works.
              */
-            else if (this.iOSVersion && this.iOSVersion <= 7) {
+            else if ($.os.ios && $.os.major <= 7) {
                 this.$element.find('input, select, textarea')
                     .on('focus', function() {
                         setTimeout(function() {
@@ -149,11 +148,11 @@
         unlock: function() {
             this.$doc.on('touchmove', this._preventDefault);
 
-            if (this.isChrome) {
+            if ($.browser.chrome) {
                 this.$html.css('position', '');
                 this.$html.css('top', '');
                 window.scrollTo(0, this.scrollPosition);
-            } else if (this.iOSVersion && this.iOSVersion >= 8) {
+            } else if ($.os.ios && $.os.major >= 8) {
                 this.$body
                     .css('margin', '');
 
@@ -162,7 +161,7 @@
                     .css('height', '');
 
                 window.scrollTo(0, this.scrollPosition);
-            } else if (this.iOSVersion && this.iOSVersion <= 7) {
+            } else if ($.os.ios && $.os.major <= 7) {
                 this.$element.find('input, select, textarea').off('focus');
             }
 
