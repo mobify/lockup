@@ -73,13 +73,11 @@
                 .renameAttr('src', 'x-src')
                 .attr('type', 'text/lockup-script');
 
-            var $container = $('<div />').addClass(classes.CONTAINER);
-
-            this.$body.wrapInner($container);
+            this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
 
             $scripts.renameAttr('x-src', 'src').attr('type', 'text/javascript');
 
-            return $container;
+            return this.$body.find('.' + classes.CONTAINER);
         },
 
         container: function() {
