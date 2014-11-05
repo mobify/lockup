@@ -1,0 +1,2 @@
+0.0.4
+    - Fixes issue in jQuery where wrapInner returns a cloned element
