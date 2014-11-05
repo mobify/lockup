@@ -11,7 +11,7 @@ A mobile first scroll blocking plugin
 * [Zepto](http://zeptojs.com/)
 * [Plugin](http://github.com/mobify/plugin)
 * [Deckard](http://github.com/mobify/deckard)
-* 
+
 ## Installation
 
 Lockup can be installed using bower:
