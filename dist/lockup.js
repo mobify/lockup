@@ -29,7 +29,7 @@
         Lockup.__super__.call(this, element, options, Lockup.DEFAULTS);
     }
 
-    Lockup.VERSION = '0.0.3';
+    Lockup.VERSION = '0.0.4';
 
     Lockup.DEFAULTS = {
         container: null
@@ -166,21 +166,6 @@
             }
 
             this.$doc.off('touchmove', this._preventDefault);
-        },
-
-        /**
-         * Returns the current iOS Version Number
-         */
-        _getiOSVersion: function() {
-            if (/ip(hone|od|ad)/i.test(navigator.platform)) {
-                // supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
-                var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
-                v = [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
-
-                return v && v[0] || 0;
-            }
-
-            return false;
         },
 
         _preventDefault: function(e) {

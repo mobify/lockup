@@ -1,0 +1,2 @@
+0.0.4
+    - Removes vestigial iOS version checking code now that we use Deckard
