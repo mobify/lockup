@@ -32,7 +32,7 @@
     Lockup.VERSION = '0';
 
     Lockup.DEFAULTS = {
-        container: $('<div />')
+        container: null
     };
 
     Plugin.create('lockup', Lockup, {
@@ -52,12 +52,14 @@
          * automatically, and append all body content to it.
          */
         _buildContainer: function() {
+            // Check if there's a lockup container already created. If there is,
+            // we don't want to create another. There can be only one!
             var $container = $('.' + classes.CONTAINER);
 
             if (!$container.length) {
-                $container = $(this.options.container).addClass(classes.CONTAINER);
-            } else {
-                $container = this._createContainer();
+                $container = this.options.container ?
+                    $(this.options.container).addClass(classes.CONTAINER):
+                    this._createContainer();
             }
 
             return $container;
@@ -69,7 +71,7 @@
                 .renameAttr('src', 'x-src')
                 .attr('type', 'text/lockup-script');
 
-            this.$body.wrapInner(this.options.container.addClass(classes.CONTAINER));
+            this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
 
             $scripts.renameAttr('x-src', 'src').attr('type', 'text/javascript');
 
