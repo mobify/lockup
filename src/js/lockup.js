@@ -32,7 +32,7 @@
     Lockup.VERSION = '0';
 
     Lockup.DEFAULTS = {
-        container: null
+        container: $('<div />')
     };
 
     Plugin.create('lockup', Lockup, {
@@ -42,7 +42,7 @@
             this.$body = $('body');
             this.$doc = $(document);
 
-            this.$element.appendTo(this.$container = this._buildContainer());
+            this.$container = this._buildContainer();
         },
 
         /**
@@ -54,14 +54,10 @@
         _buildContainer: function() {
             var $container = $('.' + classes.CONTAINER);
 
-            if (this.options.container) {
-                if (!$container.length) {
-                    $container = $(this.options.container).addClass(classes.CONTAINER);
-                }
+            if (!$container.length) {
+                $container = $(this.options.container).addClass(classes.CONTAINER);
             } else {
-                if (!$container.length) {
-                    $container = this._createContainer();
-                }
+                $container = this._createContainer();
             }
 
             return $container;
@@ -73,7 +69,7 @@
                 .renameAttr('src', 'x-src')
                 .attr('type', 'text/lockup-script');
 
-            this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
+            this.$body.wrapInner(this.options.container.addClass(classes.CONTAINER));
 
             $scripts.renameAttr('x-src', 'src').attr('type', 'text/javascript');
 
