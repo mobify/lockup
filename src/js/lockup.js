@@ -78,10 +78,6 @@
             return this.$body.find('.' + classes.CONTAINER);
         },
 
-        container: function() {
-            return this.$container;
-        },
-
         /**
          * This function contains several methods for fixing scrolling issues
          * across different browsers. See each if statement for an in depth
