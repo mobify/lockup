@@ -22,7 +22,8 @@
     });
 
     var classes = {
-        CONTAINER: 'lockup__container'
+        CONTAINER: 'lockup__container',
+        LOCKED: 'lockup--is-locked'
     };
 
     function Lockup(element, options) {
@@ -94,6 +95,8 @@
 
             this.$doc.off('touchmove', this._preventDefault);
 
+            this.$container.addClass(classes.LOCKED);
+
             /**
              * On Chrome, we can get away with fixing the position of the html
              * and moving it up to the equivalent of the scroll position
@@ -140,6 +143,8 @@
         unlock: function() {
             this.$doc.on('touchmove', this._preventDefault);
 
+            this.$container.removeClass(classes.LOCKED);
+
             if ($.browser.chrome) {
                 this.$html.css('position', '');
                 this.$html.css('top', '');
@@ -158,6 +163,10 @@
             }
 
             this.$doc.off('touchmove', this._preventDefault);
+        },
+
+        isLocked: function() {
+            return this.$container.hasClass(classes.LOCKED);
         },
 
         _preventDefault: function(e) {
