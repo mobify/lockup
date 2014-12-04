@@ -22,14 +22,15 @@
     });
 
     var classes = {
-        CONTAINER: 'lockup__container'
+        CONTAINER: 'lockup__container',
+        LOCKED: 'lockup--is-locked'
     };
 
     function Lockup(element, options) {
         Lockup.__super__.call(this, element, options, Lockup.DEFAULTS);
     }
 
-    Lockup.VERSION = '0.0.5';
+    Lockup.VERSION = '1.0.0';
 
     Lockup.DEFAULTS = {
         container: null
@@ -42,7 +43,7 @@
             this.$body = $('body');
             this.$doc = $(document);
 
-            this.$element.appendTo(this.$container = this._buildContainer());
+            this.$container = this._buildContainer();
         },
 
         /**
@@ -52,16 +53,14 @@
          * automatically, and append all body content to it.
          */
         _buildContainer: function() {
+            // Check if there's a lockup container already created. If there is,
+            // we don't want to create another. There can be only one!
             var $container = $('.' + classes.CONTAINER);
 
-            if (this.options.container) {
-                if (!$container.length) {
-                    $container = $(this.options.container).addClass(classes.CONTAINER);
-                }
-            } else {
-                if (!$container.length) {
-                    $container = this._createContainer();
-                }
+            if (!$container.length) {
+                $container = this.options.container ?
+                    $(this.options.container).addClass(classes.CONTAINER) :
+                    this._createContainer();
             }
 
             return $container;
@@ -80,10 +79,6 @@
             return this.$body.find('.' + classes.CONTAINER);
         },
 
-        container: function() {
-            return this.$container;
-        },
-
         /**
          * This function contains several methods for fixing scrolling issues
          * across different browsers. See each if statement for an in depth
@@ -99,6 +94,8 @@
             this.scrollPosition = this.$body.scrollTop();
 
             this.$doc.off('touchmove', this._preventDefault);
+
+            this.$container.addClass(classes.LOCKED);
 
             /**
              * On Chrome, we can get away with fixing the position of the html
@@ -146,6 +143,8 @@
         unlock: function() {
             this.$doc.on('touchmove', this._preventDefault);
 
+            this.$container.removeClass(classes.LOCKED);
+
             if ($.browser.chrome) {
                 this.$html.css('position', '');
                 this.$html.css('top', '');
@@ -164,6 +163,10 @@
             }
 
             this.$doc.off('touchmove', this._preventDefault);
+        },
+
+        isLocked: function() {
+            return this.$container.hasClass(classes.LOCKED);
         },
 
         _preventDefault: function(e) {
