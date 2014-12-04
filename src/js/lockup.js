@@ -59,7 +59,7 @@
 
             if (!$container.length) {
                 $container = this.options.container ?
-                    $(this.options.container).addClass(classes.CONTAINER):
+                    $(this.options.container).addClass(classes.CONTAINER) :
                     this._createContainer();
             }
 
