@@ -48,6 +48,16 @@
             this.$container = this._buildContainer();
         },
 
+        destroy: function() {
+            if (this.containerCreated) {
+                this._disableScripts(function() {
+                    this.$body.append(this.$container.children());
+                });
+
+                this.$container.remove();
+            }
+        },
+
         /**
          * The body content needs to be wrapped in a containing
          * element in order to facilitate scroll blocking. One can
@@ -69,16 +79,24 @@
         },
 
         _createContainer: function() {
+            this.containerCreated = true;
+
+            this._disableScripts(function() {
+                this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
+            });
+
+            return this.$body.find('.' + classes.CONTAINER);
+        },
+
+        _disableScripts: function(fn) {
             // scripts must be disabled to avoid re-executing them
             var $scripts = this.$body.find('script')
                 .renameAttr('src', 'x-src')
                 .attr('type', 'text/lockup-script');
 
-            this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
+            fn.call(this);
 
             $scripts.renameAttr('x-src', 'src').attr('type', 'text/javascript');
-
-            return this.$body.find('.' + classes.CONTAINER);
         },
 
         /**
@@ -142,6 +160,8 @@
                             self._trigger('locked');
                         }, 0);
                     });
+            } else {
+                this._trigger('locked');
             }
         },
 

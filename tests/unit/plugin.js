@@ -36,12 +36,16 @@ define([
                 element.lockup({});
 
                 assert.isDefined(element.data('lockup'));
+
+                element.lockup('destroy');
             });
 
             it('stores element inside instance', function() {
                 element.lockup({});
 
                 assert.isDefined(element.data('lockup').$element);
+
+                element.lockup('destroy');
             });
         });
 

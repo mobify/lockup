@@ -33,7 +33,9 @@
     Lockup.VERSION = '1.0.0';
 
     Lockup.DEFAULTS = {
-        container: null
+        container: null,
+        locked: $.noop,
+        unlocked: $.noop
     };
 
     Plugin.create('lockup', Lockup, {
@@ -44,6 +46,16 @@
             this.$doc = $(document);
 
             this.$container = this._buildContainer();
+        },
+
+        destroy: function() {
+            if (this.containerCreated) {
+                this._disableScripts(function() {
+                    this.$body.append(this.$container.children());
+                });
+
+                this.$container.remove();
+            }
         },
 
         /**
@@ -67,16 +79,24 @@
         },
 
         _createContainer: function() {
+            this.containerCreated = true;
+
+            this._disableScripts(function() {
+                this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
+            });
+
+            return this.$body.find('.' + classes.CONTAINER);
+        },
+
+        _disableScripts: function(fn) {
             // scripts must be disabled to avoid re-executing them
             var $scripts = this.$body.find('script')
                 .renameAttr('src', 'x-src')
                 .attr('type', 'text/lockup-script');
 
-            this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
+            fn.call(this);
 
             $scripts.renameAttr('x-src', 'src').attr('type', 'text/javascript');
-
-            return this.$body.find('.' + classes.CONTAINER);
         },
 
         /**
@@ -105,6 +125,8 @@
             if ($.browser.chrome) {
                 this.$html.css('position', 'fixed');
                 this.$html.css('top', this.scrollPosition * -1);
+
+                this._trigger('locked');
             }
             /**
              * On iOS8, we lock the height of the element's body wrapping div as well
@@ -120,6 +142,8 @@
                     .height(window.innerHeight)
                     .css('overflow', 'hidden')
                     .scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
+
+                this._trigger('locked');
             }
             /**
              * On iOS7 and under, the browser can't handle what we're doing
@@ -132,8 +156,12 @@
                     .on('focus', function() {
                         setTimeout(function() {
                             window.scrollTo(0, self.scrollPosition);
+
+                            self._trigger('locked');
                         }, 0);
                     });
+            } else {
+                this._trigger('locked');
             }
         },
 
@@ -161,6 +189,8 @@
             } else if ($.os.ios && $.os.major <= 7) {
                 this.$element.find('input, select, textarea').off('focus');
             }
+
+            this._trigger('unlocked');
 
             this.$doc.off('touchmove', this._preventDefault);
         },
