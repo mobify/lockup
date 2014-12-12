@@ -33,7 +33,9 @@
     Lockup.VERSION = '1.0.0';
 
     Lockup.DEFAULTS = {
-        container: null
+        container: null,
+        locked: $.noop,
+        unlocked: $.noop
     };
 
     Plugin.create('lockup', Lockup, {
@@ -105,6 +107,8 @@
             if ($.browser.chrome) {
                 this.$html.css('position', 'fixed');
                 this.$html.css('top', this.scrollPosition * -1);
+
+                this._trigger('locked');
             }
             /**
              * On iOS8, we lock the height of the element's body wrapping div as well
@@ -120,6 +124,8 @@
                     .height(window.innerHeight)
                     .css('overflow', 'hidden')
                     .scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
+
+                this._trigger('locked');
             }
             /**
              * On iOS7 and under, the browser can't handle what we're doing
@@ -132,6 +138,8 @@
                     .on('focus', function() {
                         setTimeout(function() {
                             window.scrollTo(0, self.scrollPosition);
+
+                            self._trigger('locked');
                         }, 0);
                     });
             }
@@ -161,6 +169,8 @@
             } else if ($.os.ios && $.os.major <= 7) {
                 this.$element.find('input, select, textarea').off('focus');
             }
+
+            this._trigger('unlocked');
 
             this.$doc.off('touchmove', this._preventDefault);
         },
