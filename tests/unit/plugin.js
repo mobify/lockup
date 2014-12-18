@@ -5,6 +5,10 @@ define([
 ], function(fixture, $) {
     var $element;
 
+    var getInstanceCount = function(sel) {
+        return $(sel).data('instance');
+    };
+
     describe('lockup plugin', function() {
         beforeEach(function() {
             $element = $(fixture);
@@ -48,14 +52,17 @@ define([
                 var $second = $('<div />').lockup();
                 var $third = $('<div />').lockup();
 
-                var instanceCount = $('.lockup__container').data('instance');
-
-                assert.equal(instanceCount, 3);
+                assert.equal(getInstanceCount('.lockup__container'), 3);
 
                 $first.lockup('destroy');
+
+                assert.equal(getInstanceCount('.lockup__container'), 2);
+
                 $second.lockup('destroy');
                 $third.lockup('destroy');
-            })
+
+                assert.equal(getInstanceCount('.lockup__container'), 0);
+            });
         });
 
         describe('invoking lockup methods before plugin is initialized', function() {
