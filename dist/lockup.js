@@ -46,16 +46,30 @@
             this.$doc = $(document);
 
             this.$container = this._buildContainer();
+
+            // We track instances of elements using lockup so that when we
+            // destroy lockup, we don't destroy it if elements are still
+            // using it.
+            var instanceCount = this._instanceCount();
+            this._instanceCount(++instanceCount);
         },
 
         destroy: function() {
-            if (this.$container.data('instance') === 1 && this.containerCreated) {
+            if (this._instanceCount() === 1 && this.containerCreated) {
                 this._disableScripts(function() {
                     this.$body.append(this.$container.children());
                 });
 
                 this.$container.remove();
             }
+        },
+
+        _instanceCount: function(count) {
+            if (count) {
+                this.$container.data('instance', count);
+            }
+
+            return this.$container.data('instance') || 0;
         },
 
         /**
@@ -74,9 +88,6 @@
                     $(this.options.container).addClass(classes.CONTAINER) :
                     this._createContainer();
             }
-
-            var instanceCount = $container.data('instance') || 0;
-            $container.data('instance', ++instanceCount);
 
             return $container;
         },

@@ -18,6 +18,8 @@ define([
             });
 
             assert.isDefined(lockup);
+
+            lockup.destroy();
         });
     });
 });

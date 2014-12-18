@@ -3,18 +3,11 @@ define([
     '$',
     'lockup'
 ], function(fixture, $) {
-    var element;
+    var $element;
 
     describe('lockup plugin', function() {
         beforeEach(function() {
-            element = $(fixture);
-        });
-
-        afterEach(function() {
-            if (element) {
-                element.remove();
-                element = null;
-            }
+            $element = $(fixture);
         });
 
         describe('binding to Zepto\'s fn', function() {
@@ -32,26 +25,42 @@ define([
         });
 
         describe('invoking lockup', function() {
-            it('creates lockup instance on element', function() {
-                element.lockup({});
+            it('creates lockup instance on $element', function() {
+                $element.lockup({});
 
-                assert.isDefined(element.data('lockup'));
+                assert.isDefined($element.data('lockup'));
 
-                element.lockup('destroy');
+                $element.lockup('destroy');
             });
 
-            it('stores element inside instance', function() {
-                element.lockup({});
+            it('stores $element inside instance', function() {
+                $element.lockup({});
 
-                assert.isDefined(element.data('lockup').$element);
+                assert.isDefined($element.data('lockup').$element);
 
-                element.lockup('destroy');
+                $element.lockup('destroy');
             });
+        });
+
+        describe('invoking multiple lockups', function() {
+            it('correctly tracks instance counts', function() {
+                var $first = $('<div />').lockup();
+                var $second = $('<div />').lockup();
+                var $third = $('<div />').lockup();
+
+                var instanceCount = $('.lockup__container').data('instance');
+
+                assert.equal(instanceCount, 3);
+
+                $first.lockup('destroy');
+                $second.lockup('destroy');
+                $third.lockup('destroy');
+            })
         });
 
         describe('invoking lockup methods before plugin is initialized', function() {
             it('throws when not initialized', function() {
-                assert.throws(function() { element.lockup('lock'); });
+                assert.throws(function() { $element.lockup('lock'); });
             });
         });
     });
