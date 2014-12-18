@@ -55,7 +55,9 @@
         },
 
         destroy: function() {
-            if (this._instanceCount() === 1 && this.containerCreated) {
+            var instanceCount = this._instanceCount();
+
+            if (this._instanceCount(--instanceCount) === 0 && this.containerCreated) {
                 this._disableScripts(function() {
                     this.$body.append(this.$container.children());
                 });
@@ -65,9 +67,7 @@
         },
 
         _instanceCount: function(count) {
-            if (count) {
-                this.$container.data('instance', count);
-            }
+            !isNaN(count) && this.$container.data('instance', count);
 
             return this.$container.data('instance') || 0;
         },
