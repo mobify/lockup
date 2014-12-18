@@ -49,7 +49,7 @@
         },
 
         destroy: function() {
-            if (this.containerCreated) {
+            if (this.$container.data('instance') === 1 && this.containerCreated) {
                 this._disableScripts(function() {
                     this.$body.append(this.$container.children());
                 });
@@ -74,6 +74,9 @@
                     $(this.options.container).addClass(classes.CONTAINER) :
                     this._createContainer();
             }
+
+            var instanceCount = $container.data('instance') || 0;
+            $container.data('instance', ++instanceCount);
 
             return $container;
         },
