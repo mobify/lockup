@@ -56,8 +56,9 @@
 
         destroy: function() {
             var instanceCount = this._instanceCount();
+            var containerGenerated = this.$container.data('generated');
 
-            if (this._instanceCount(--instanceCount) === 0 && this.containerCreated) {
+            if (this._instanceCount(--instanceCount) === 0 && containerGenerated) {
                 this._disableScripts(function() {
                     this.$body.append(this.$container.children());
                 });
@@ -86,15 +87,13 @@
             if (!$container.length) {
                 $container = this.options.container ?
                     $(this.options.container).addClass(classes.CONTAINER) :
-                    this._createContainer();
+                    this._createContainer() && $container.data('generated', true);
             }
 
             return $container;
         },
 
         _createContainer: function() {
-            this.containerCreated = true;
-
             this._disableScripts(function() {
                 this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
             });
