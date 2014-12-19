@@ -63,6 +63,14 @@ define([
 
                 assert.equal(getInstanceCount(), 0);
             });
+
+            it('removes the lockup container if it was generated and no more lockups exist', function() {
+                var $lockup = $('<div />').lockup();
+
+                $lockup.destroy();
+
+                assert.equal($('.lockup__container').length, 0);
+            });
         });
 
         describe('invoking lockup methods before plugin is initialized', function() {
