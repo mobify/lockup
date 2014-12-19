@@ -87,7 +87,7 @@
             if (!$container.length) {
                 $container = this.options.container ?
                     $(this.options.container).addClass(classes.CONTAINER) :
-                    this._createContainer() && $container.data('generated', true);
+                    this._createContainer();
             }
 
             return $container;
@@ -98,7 +98,7 @@
                 this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
             });
 
-            return this.$body.find('.' + classes.CONTAINER);
+            return this.$body.find('.' + classes.CONTAINER).data('generated', true);
         },
 
         _disableScripts: function(fn) {

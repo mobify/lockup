@@ -45,7 +45,7 @@ define([
         describe('invoking multiple lockups', function() {
             it('correctly tracks instance counts', function() {
                 var getInstanceCount = function() {
-                    return $('.lockup__container').data('instance');
+                    return $('.lockup__container').data('instance') || 0;
                 };
 
                 var $first = $('<div />').lockup();
@@ -67,7 +67,7 @@ define([
             it('removes the lockup container if it was generated and no more lockups exist', function() {
                 var $lockup = $('<div />').lockup();
 
-                $lockup.destroy();
+                $lockup.lockup('destroy');
 
                 assert.equal($('.lockup__container').length, 0);
             });
