@@ -46,6 +46,31 @@
             this.$doc = $(document);
 
             this.$container = this._buildContainer();
+
+            // We track instances of elements using lockup so that when we
+            // destroy lockup, we don't destroy it if elements are still
+            // using it.
+            var instanceCount = this._instanceCount();
+            this._instanceCount(++instanceCount);
+        },
+
+        destroy: function() {
+            var instanceCount = this._instanceCount();
+            var containerGenerated = this.$container.data('generated');
+
+            if (this._instanceCount(--instanceCount) === 0 && containerGenerated) {
+                this._disableScripts(function() {
+                    this.$body.append(this.$container.children());
+                });
+
+                this.$container.remove();
+            }
+        },
+
+        _instanceCount: function(count) {
+            !isNaN(count) && this.$container.data('instance', count);
+
+            return this.$container.data('instance') || 0;
         },
 
         /**
@@ -69,16 +94,22 @@
         },
 
         _createContainer: function() {
+            this._disableScripts(function() {
+                this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
+            });
+
+            return this.$body.find('.' + classes.CONTAINER).data('generated', true);
+        },
+
+        _disableScripts: function(fn) {
             // scripts must be disabled to avoid re-executing them
             var $scripts = this.$body.find('script')
                 .renameAttr('src', 'x-src')
                 .attr('type', 'text/lockup-script');
 
-            this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
+            fn.call(this);
 
             $scripts.renameAttr('x-src', 'src').attr('type', 'text/javascript');
-
-            return this.$body.find('.' + classes.CONTAINER);
         },
 
         /**
@@ -142,6 +173,8 @@
                             self._trigger('locked');
                         }, 0);
                     });
+            } else {
+                this._trigger('locked');
             }
         },
 
