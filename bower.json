@@ -19,7 +19,7 @@
     "./!(src|dist|lib|templates)"
   ],
   "dependencies": {
-    "plugin": "~2.1.0",
+    "plugin": "mobify/plugin#returnable-methods",
     "requirejs-text": "~2.0.12",
     "requirejs": "~2.1.14",
     "deckard": "~1.0.0"

@@ -78,5 +78,24 @@ define([
                 assert.throws(function() { $element.lockup('lock'); });
             });
         });
+
+        describe('invoking isLocked', function() {
+            it('returns true when locked', function() {
+                var $lockup = $('<div />').lockup();
+
+                $lockup.lockup('lock');
+
+                assert.isTrue($lockup.lockup('isLocked'));
+            });
+
+            it('returns false when unlocked', function() {
+                var $lockup = $('<div />').lockup();
+
+                $lockup.lockup('lock');
+                $lockup.lockup('unlock');
+
+                assert.isFalse($lockup.lockup('isLocked'));
+            });
+        });
     });
 });
