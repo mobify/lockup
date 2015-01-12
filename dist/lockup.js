@@ -63,6 +63,7 @@
                     this.$body.append(this.$container.children());
                 });
 
+                this.$element.removeData(this.name);
                 this.$container.remove();
             }
         },
