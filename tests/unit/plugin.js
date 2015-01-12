@@ -86,6 +86,8 @@ define([
                 $lockup.lockup('lock');
 
                 assert.isTrue($lockup.lockup('isLocked'));
+
+                $lockup.lockup('destroy');
             });
 
             it('returns false when unlocked', function() {
@@ -95,6 +97,8 @@ define([
                 $lockup.lockup('unlock');
 
                 assert.isFalse($lockup.lockup('isLocked'));
+
+                $lockup.lockup('destroy');
             });
         });
     });
