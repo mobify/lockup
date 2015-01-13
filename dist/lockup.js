@@ -30,7 +30,7 @@
         Lockup.__super__.call(this, element, options, Lockup.DEFAULTS);
     }
 
-    Lockup.VERSION = '1.1.0';
+    Lockup.VERSION = '1.1.1';
 
     Lockup.DEFAULTS = {
         container: null,
@@ -63,6 +63,7 @@
                     this.$body.append(this.$container.children());
                 });
 
+                this.$element.removeData(this.name);
                 this.$container.remove();
             }
         },
