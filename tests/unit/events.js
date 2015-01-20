@@ -3,18 +3,38 @@ define([
     '$',
     'lockup'
 ], function(fixture, $) {
-    var element;
+    var $element;
 
     describe('lockup events', function() {
         beforeEach(function() {
-            element = $(fixture);
+            $element = $(fixture);
         });
 
         afterEach(function() {
-            if (element) {
-                element.remove();
-                element = null;
-            }
+            $element.lockup('destroy');
+        });
+
+        it('fires the locked event when lockup is locked', function(done) {
+            $element.lockup({
+                locked: function() {
+                    done();
+                }
+            });
+
+            $element.lockup('lock');
+        });
+
+        it('fires the unlocked event when lockup is unlocked', function(done) {
+            $element.lockup({
+                locked: function() {
+                    $element.lockup('unlock');
+                },
+                unlocked: function() {
+                    done();
+                }
+            });
+
+            $element.lockup('lock');
         });
     });
 });

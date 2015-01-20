@@ -7,7 +7,7 @@
         ], factory);
     } else {
         var framework = window.Zepto || window.jQuery;
-        factory(framework, window.bouncefix, window.Plugin);
+        factory(framework, window.Plugin);
     }
 }(function($, Plugin) {
     $.extend($.fn, {
@@ -22,7 +22,8 @@
     });
 
     var classes = {
-        CONTAINER: 'lockup__container'
+        CONTAINER: 'lockup__container',
+        LOCKED: 'lockup--is-locked'
     };
 
     function Lockup(element, options) {
@@ -32,7 +33,9 @@
     Lockup.VERSION = '0';
 
     Lockup.DEFAULTS = {
-        container: null
+        container: null,
+        locked: $.noop,
+        unlocked: $.noop
     };
 
     Plugin.create('lockup', Lockup, {
@@ -42,7 +45,33 @@
             this.$body = $('body');
             this.$doc = $(document);
 
-            this.$element.appendTo(this.$container = this._buildContainer());
+            this.$container = this._buildContainer();
+
+            // We track instances of elements using lockup so that when we
+            // destroy lockup, we don't destroy it if elements are still
+            // using it.
+            var instanceCount = this._instanceCount();
+            this._instanceCount(++instanceCount);
+        },
+
+        destroy: function() {
+            var instanceCount = this._instanceCount();
+            var containerGenerated = this.$container.data('generated');
+
+            if (this._instanceCount(--instanceCount) === 0 && containerGenerated) {
+                this._disableScripts(function() {
+                    this.$body.append(this.$container.children());
+                });
+
+                this.$element.removeData(this.name);
+                this.$container.remove();
+            }
+        },
+
+        _instanceCount: function(count) {
+            !isNaN(count) && this.$container.data('instance', count);
+
+            return this.$container.data('instance') || 0;
         },
 
         /**
@@ -52,38 +81,36 @@
          * automatically, and append all body content to it.
          */
         _buildContainer: function() {
+            // Check if there's a lockup container already created. If there is,
+            // we don't want to create another. There can be only one!
             var $container = $('.' + classes.CONTAINER);
 
-            if (this.options.container) {
-                if (!$container.length) {
-                    $container = $(this.options.container).addClass(classes.CONTAINER);
-                }
-            } else {
-                if (!$container.length) {
-                    $container = this._createContainer();
-                }
+            if (!$container.length) {
+                $container = this.options.container ?
+                    $(this.options.container).addClass(classes.CONTAINER) :
+                    this._createContainer();
             }
 
             return $container;
         },
 
         _createContainer: function() {
+            this._disableScripts(function() {
+                this.$body.wrapInner($('<div />').addClass(classes.CONTAINER));
+            });
+
+            return this.$body.find('.' + classes.CONTAINER).data('generated', true);
+        },
+
+        _disableScripts: function(fn) {
             // scripts must be disabled to avoid re-executing them
             var $scripts = this.$body.find('script')
                 .renameAttr('src', 'x-src')
                 .attr('type', 'text/lockup-script');
 
-            var $container = $('<div />').addClass(classes.CONTAINER);
-
-            this.$body.wrapInner($container);
+            fn.call(this);
 
             $scripts.renameAttr('x-src', 'src').attr('type', 'text/javascript');
-
-            return $container;
-        },
-
-        container: function() {
-            return this.$container;
         },
 
         /**
@@ -102,6 +129,8 @@
 
             this.$doc.off('touchmove', this._preventDefault);
 
+            this.$container.addClass(classes.LOCKED);
+
             /**
              * On Chrome, we can get away with fixing the position of the html
              * and moving it up to the equivalent of the scroll position
@@ -110,6 +139,8 @@
             if ($.browser.chrome) {
                 this.$html.css('position', 'fixed');
                 this.$html.css('top', this.scrollPosition * -1);
+
+                this._trigger('locked');
             }
             /**
              * On iOS8, we lock the height of the element's body wrapping div as well
@@ -125,6 +156,8 @@
                     .height(window.innerHeight)
                     .css('overflow', 'hidden')
                     .scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
+
+                this._trigger('locked');
             }
             /**
              * On iOS7 and under, the browser can't handle what we're doing
@@ -137,8 +170,12 @@
                     .on('focus', function() {
                         setTimeout(function() {
                             window.scrollTo(0, self.scrollPosition);
+
+                            self._trigger('locked');
                         }, 0);
                     });
+            } else {
+                this._trigger('locked');
             }
         },
 
@@ -147,6 +184,8 @@
          */
         unlock: function() {
             this.$doc.on('touchmove', this._preventDefault);
+
+            this.$container.removeClass(classes.LOCKED);
 
             if ($.browser.chrome) {
                 this.$html.css('position', '');
@@ -165,7 +204,13 @@
                 this.$element.find('input, select, textarea').off('focus');
             }
 
+            this._trigger('unlocked');
+
             this.$doc.off('touchmove', this._preventDefault);
+        },
+
+        isLocked: function() {
+            return this.$container.hasClass(classes.LOCKED);
         },
 
         _preventDefault: function(e) {
