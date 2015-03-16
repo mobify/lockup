@@ -136,28 +136,27 @@
              * and moving it up to the equivalent of the scroll position
              * to lock scrolling.
              */
-            if ($.browser.chrome) {
-                this.$html.css('position', 'fixed');
-                this.$html.css('top', this.scrollPosition * -1);
+            if (true) {
+                this.$container.scrollTop(this.scrollPosition);
 
                 this._trigger('locked');
-            }
-            /**
-             * On iOS8, we lock the height of the element's body wrapping div as well
-             * as do some scrolling magic to make sure forms don't jump the page
-             * around when they're focused.
-             */
-            else if ($.os.ios && $.os.major >= 8) {
-                this.$body
-                    .css('margin-top', 0)
-                    .css('margin-bottom', 0);
+            // }
+            // /**
+            //  * On iOS8, we lock the height of the element's body wrapping div as well
+            //  * as do some scrolling magic to make sure forms don't jump the page
+            //  * around when they're focused.
+            //  */
+            // else if ($.os.ios && $.os.major >= 8) {
+            //     this.$body
+            //         .css('margin-top', 0)
+            //         .css('margin-bottom', 0);
 
-                this.$container
-                    .height(window.innerHeight)
-                    .css('overflow', 'hidden')
-                    .scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
+            //     this.$container
+            //         .height(window.innerHeight)
+            //         .css('overflow', 'hidden')
+            //         .scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
 
-                this._trigger('locked');
+            //     this._trigger('locked');
             }
             /**
              * On iOS7 and under, the browser can't handle what we're doing
