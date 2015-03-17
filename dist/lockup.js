@@ -93,8 +93,7 @@
             }
 
             $container.css({
-                'overflow': 'hidden',
-                'min-height': '100%'
+                'overflow': 'hidden'
             });
 
             return $container;
@@ -204,7 +203,7 @@
 
             this.$container.removeClass(classes.LOCKED);
 
-            if ($.os.chrome || ($.os.ios && $.os.major >= 8)) {
+            if ($.browser.chrome || ($.os.ios && $.os.major >= 8)) {
                 this.$roots.css('height', '');
 
                 this.$body.css({
