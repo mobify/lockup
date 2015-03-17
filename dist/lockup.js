@@ -173,10 +173,6 @@
 
                 this.$container.scrollTop(this.scrollPosition);
 
-                this.$container.css({
-                    'height': ''
-                });
-
                 this._trigger('locked');
             }
             /**
