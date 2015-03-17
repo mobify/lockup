@@ -43,6 +43,7 @@
             this.$element = $(element);
             this.$html = $('html');
             this.$body = $('body');
+            this.$roots = this.$html.add(this.$body);
             this.$doc = $(document);
 
             this.$container = this._buildContainer();
@@ -91,6 +92,10 @@
                     this._createContainer();
             }
 
+            $container.css({
+                'overflow': 'hidden'
+            });
+
             return $container;
         },
 
@@ -121,9 +126,17 @@
         lock: function() {
             var self = this;
 
-            var getPadding = function(position) {
-                return parseInt(self.$body.css('padding-' + position));
-            };
+            this.bodyPaddingTop = this._getStyle(self.$body, 'padding-top');
+            this.bodyPaddingBottom = this._getStyle(self.$body, 'padding-bottom');
+            this.bodyHasPadding = this.bodyPaddingTop > 0 || this.bodyPaddingBottom > 0;
+            this.bodyMargin = this._getStyle(self.$body, 'margin-top');
+            this.containerPaddingTop = 0;
+            this.containerPaddingBottom = 0;
+
+            if (this.bodyPaddingTop > 0) {
+                this.containerPaddingTop = this._getStyle(self.$container, 'padding-top');
+                this.containerPaddingBottom = this._getStyle(self.$container, 'padding-bottom');
+            }
 
             this.scrollPosition = this.$body.scrollTop();
 
@@ -131,31 +144,34 @@
 
             this.$container.addClass(classes.LOCKED);
 
-            /**
-             * On Chrome, we can get away with fixing the position of the html
-             * and moving it up to the equivalent of the scroll position
-             * to lock scrolling.
-             */
-            if ($.browser.chrome) {
-                this.$html.css('position', 'fixed');
-                this.$html.css('top', this.scrollPosition * -1);
+            if ($.browser.chrome || ($.os.ios && $.os.major >= 8)) {
+                this.$roots.height('100%');
 
-                this._trigger('locked');
-            }
-            /**
-             * On iOS8, we lock the height of the element's body wrapping div as well
-             * as do some scrolling magic to make sure forms don't jump the page
-             * around when they're focused.
-             */
-            else if ($.os.ios && $.os.major >= 8) {
-                this.$body
-                    .css('margin-top', 0)
-                    .css('margin-bottom', 0);
+                this.$container.css({
+                    'overflow': 'hidden',
+                    'height': window.innerHeight
+                });
 
-                this.$container
-                    .height(window.innerHeight)
-                    .css('overflow', 'hidden')
-                    .scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
+                if (this.bodyHasPadding) {
+                    this.$body.css({
+                        'padding-top': 0,
+                        'padding-bottom': 0
+                    });
+
+                    this.$container.css({
+                        'padding-top': this.containerPaddingTop + this.bodyPaddingTop,
+                        'padding-bottom': this.containerPaddingBottom + this.bodyPaddingBottom
+                    });
+                }
+
+                if (this.bodyMargin > 0) {
+                    this.$body.css({
+                        'margin-top': 0,
+                        'margin-bottom': 0
+                    });
+                }
+
+                this.$container.scrollTop(this.scrollPosition);
 
                 this._trigger('locked');
             }
@@ -187,17 +203,20 @@
 
             this.$container.removeClass(classes.LOCKED);
 
-            if ($.browser.chrome) {
-                this.$html.css('position', '');
-                this.$html.css('top', '');
-                window.scrollTo(0, this.scrollPosition);
-            } else if ($.os.ios && $.os.major >= 8) {
-                this.$body
-                    .css('margin', '');
+            if ($.browser.chrome || ($.os.ios && $.os.major >= 8)) {
+                this.$roots.css('height', '');
 
-                this.$container
-                    .css('overflow', '')
-                    .css('height', '');
+                this.$body.css({
+                    'margin': '',
+                    'padding': ''
+                });
+
+                this.$container.css({
+                    'overflow': '',
+                    'height': ''
+                });
+
+                this.$container.css('padding', '');
 
                 window.scrollTo(0, this.scrollPosition);
             } else if ($.os.ios && $.os.major <= 7) {
@@ -215,6 +234,10 @@
 
         _preventDefault: function(e) {
             e.preventDefault();
+        },
+
+        _getStyle: function(e, property) {
+            return parseInt(e.css(property));
         }
     });
 
