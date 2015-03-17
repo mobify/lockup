@@ -145,7 +145,7 @@
 
             this.$container.addClass(classes.LOCKED);
 
-            if ($.os.chrome || ($.os.ios && $.os.major >= 8)) {
+            if ($.browser.chrome || ($.os.ios && $.os.major >= 8)) {
                 this.$roots.height('100%');
 
                 this.$container.css({
