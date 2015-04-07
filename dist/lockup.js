@@ -139,15 +139,13 @@
             if ($.browser.chrome) {
                 this.$html.css('position', 'fixed');
                 this.$html.css('top', this.scrollPosition * -1);
-
-                this._trigger('locked');
             }
             /**
-             * On iOS8, we lock the height of the element's body wrapping div as well
+             * On iOS, we lock the height of the element's body wrapping div as well
              * as do some scrolling magic to make sure forms don't jump the page
              * around when they're focused.
              */
-            else if ($.os.ios && $.os.major >= 8) {
+            else if ($.os.ios && $.os.major >= 7) {
                 this.$body
                     .css('margin-top', 0)
                     .css('margin-bottom', 0);
@@ -156,27 +154,9 @@
                     .height(window.innerHeight)
                     .css('overflow', 'hidden')
                     .scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
-
-                this._trigger('locked');
             }
-            /**
-             * On iOS7 and under, the browser can't handle what we're doing
-             * above so we need to do the less sexy version. Wait for the
-             * focus to trigger and then jump scroll back to the initial
-             * position. Looks like crap but it works.
-             */
-            else if ($.os.ios && $.os.major <= 7) {
-                this.$element.find('input, select, textarea')
-                    .on('focus', function() {
-                        setTimeout(function() {
-                            window.scrollTo(0, self.scrollPosition);
 
-                            self._trigger('locked');
-                        }, 0);
-                    });
-            } else {
-                this._trigger('locked');
-            }
+            this._trigger('locked');
         },
 
         /**
@@ -191,7 +171,7 @@
                 this.$html.css('position', '');
                 this.$html.css('top', '');
                 window.scrollTo(0, this.scrollPosition);
-            } else if ($.os.ios && $.os.major >= 8) {
+            } else if ($.os.ios && $.os.major >= 7) {
                 this.$body
                     .css('margin', '');
 
@@ -200,8 +180,6 @@
                     .css('height', '');
 
                 window.scrollTo(0, this.scrollPosition);
-            } else if ($.os.ios && $.os.major <= 7) {
-                this.$element.find('input, select, textarea').off('focus');
             }
 
             this._trigger('unlocked');
