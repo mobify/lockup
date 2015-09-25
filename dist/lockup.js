@@ -148,14 +148,16 @@
              * around when they're focused.
              */
             else if ($.os.ios && $.os.major >= 8) {
+                var container = this.$container[0];
                 this.$body
                     .css('margin-top', 0)
                     .css('margin-bottom', 0);
 
-                this.$container
-                    .height(window.innerHeight)
-                    .css('overflow', 'hidden')
-                    .scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
+                // This repaint is causing jank in iOS9
+                // Use Javascript instead of jQuery to reduce it
+                container.style.height = window.innerHeight;
+                container.style.overflow = 'hidden';
+                this.$container.scrollTop(this.scrollPosition - getPadding('top') - getPadding('bottom'));
 
                 this._trigger('locked');
             }

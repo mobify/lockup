@@ -148,6 +148,7 @@
              * around when they're focused.
              */
             else if ($.os.ios && $.os.major >= 8) {
+                var container = this.$container[0];
                 this.$body
                     .css('margin-top', 0)
                     .css('margin-bottom', 0);
