@@ -1,3 +1,6 @@
+1.1.2
+    - Use iOS7 background scrolling fix with lockup. Also fixes an issue with
+      input focus competing with browser scroll on focusing on inputs.
 1.1.1
     - Updated version of plugin factory
 1.1.0
