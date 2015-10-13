@@ -22,6 +22,6 @@
     "plugin": "~3.0.0",
     "requirejs-text": "~2.0.12",
     "requirejs": "~2.1.14",
-    "deckard": "~1.0.0"
+    "deckard": "~1.2.0"
   }
 }
