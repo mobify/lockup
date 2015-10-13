@@ -1,3 +1,6 @@
+1.1.2
+    - Set container/body heights on iOS7+. Earlier we had a special case for
+      iOS7, which didn't lock background scrolling.
 1.1.1
     - Updated version of plugin factory
 1.1.0
