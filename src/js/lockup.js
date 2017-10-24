@@ -44,7 +44,7 @@
             this.$html = $('html');
             this.$body = $('body');
             this.$doc = $(document);
-            this.$scrollingEl = $(document.scrollingElement || document.documentElement)
+            this.$scrollingEl = $(document.scrollingElement || document.documentElement);
 
             this.$container = this._buildContainer();
 
