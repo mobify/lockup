@@ -30,7 +30,7 @@
         Lockup.__super__.call(this, element, options, Lockup.DEFAULTS);
     }
 
-    Lockup.VERSION = '1.1.3';
+    Lockup.VERSION = '1.1.4';
 
     Lockup.DEFAULTS = {
         container: null,
@@ -44,6 +44,7 @@
             this.$html = $('html');
             this.$body = $('body');
             this.$doc = $(document);
+            this.$scrollingEl = $(document.scrollingElement || document.documentElement);
 
             this.$container = this._buildContainer();
 
@@ -125,7 +126,7 @@
                 return parseInt(self.$body.css('padding-' + position));
             };
 
-            this.scrollPosition = this.$body.scrollTop();
+            this.scrollPosition = this.$scrollingEl.scrollTop();
 
             this.$doc.off('touchmove', this._preventDefault);
 
