@@ -30,7 +30,7 @@
         Lockup.__super__.call(this, element, options, Lockup.DEFAULTS);
     }
 
-    Lockup.VERSION = '1.1.3';
+    Lockup.VERSION = '1.1.4';
 
     Lockup.DEFAULTS = {
         container: null,
