@@ -125,7 +125,7 @@
                 return parseInt(self.$body.css('padding-' + position));
             };
 
-            this.scrollPosition = this.$body.scrollTop();
+            this.scrollPosition = this.$html.scrollTop();
 
             this.$doc.off('touchmove', this._preventDefault);
 
